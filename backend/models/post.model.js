@@ -21,7 +21,7 @@ const postSchema = new mongoose.Schema({
     required: true,
     maxlength: [
       100000,
-      "A post content must have less or equal to 10000 characters",
+      "A post content must have less or equal to 100000 characters",
     ],
     minlength: [1, "A post content must have more or equal than 1 character"],
   },
@@ -30,10 +30,15 @@ const postSchema = new mongoose.Schema({
   },
   publishDate: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
-const Post = new mongoose.model("Post", postSchema);
+postSchema.pre("save", function (next) {
+  this.timeToRead = Math.ceil(this.body.length / 200);
+  next();
+});
+
+const Post = mongoose.model("Post", postSchema);
 
 module.exports = Post;
